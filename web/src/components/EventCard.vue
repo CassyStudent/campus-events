@@ -19,7 +19,8 @@ const past = computed(() => isPast(props.event.startsAt));
     <div class="ticket__body">
       <h3 class="ticket__title">{{ event.title }}</h3>
       <p class="ticket__meta">{{ event.location }}, {{ formatTime(event.startsAt) }}</p>
-      <p class="ticket__meta">{{ past ? 'Took place' : `${event.capacity} seats` }}</p>
+      <p class="ticket__capacity">{{ past ? 'Took place' : `${event.capacity} seats` }}</p>
     </div>
+    <span class="ticket__arrow" aria-hidden="true">↗</span>
   </RouterLink>
 </template>

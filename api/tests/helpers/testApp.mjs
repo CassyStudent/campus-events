@@ -1,3 +1,4 @@
+import { cache } from '../../src/cache/cache.mjs';
 import { app, Event, Registration, sequelize } from '../../src/app.mjs';
 
 // The app and its database are created as soon as app.mjs is imported.
@@ -5,6 +6,7 @@ import { app, Event, Registration, sequelize } from '../../src/app.mjs';
 // Every call empties all tables: tests never share state.
 export async function createTestApp() {
   await sequelize.sync({ force: true });
+  cache.clear();
   return { app, db: { sequelize, Event, Registration } };
 }
 

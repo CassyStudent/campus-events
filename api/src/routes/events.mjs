@@ -1,0 +1,15 @@
+import { Router } from 'express';
+import { controllers as c } from '../controllers/events.mjs';
+import { validate } from '../middleware/validate.mjs';
+import { idSchema, createEventSchema, updateEventSchema, registrationSchema } from '../validation/schemas.mjs';
+export const router = Router();
+const id = validate(idSchema, 'params');
+router.get('/health', c.health);
+router.get('/events', c.list);
+router.post('/events', validate(createEventSchema, 'body'), c.create);
+router.get('/events/:id', id, c.detail);
+router.patch('/events/:id', id, validate(updateEventSchema, 'body'), c.update);
+router.delete('/events/:id', id, c.remove);
+router.get('/events/:id/registrations', id, c.registrations);
+router.post('/events/:id/registrations', id, validate(registrationSchema, 'body'), c.register);
+router.get('/stats', c.stats);

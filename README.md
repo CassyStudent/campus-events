@@ -1,97 +1,80 @@
 # Campus Events
 
-Starter project for **Advanced Development** (Thomas More – International Experience Design, year 3).
+Students browse campus events, register, and receive confirmation emails. Based on the [Thomas More starter](https://github.com/JelleOosterboschThomasMore/campus-events).
 
-A small but complete web app: students browse campus events and register for them.
+## Development
 
-- **api/** : REST API: Node.js, Express 5, Sequelize + SQLite, Zod
-- **web/** : frontend: Vue 3, Vue Router, Vite
+Use Node.js 22.22.2 or newer compatible with the starter lockfile, plus Git.
 
-It works out of the box, and it has tests. It is also the kind of code you will meet in your first job:
-the whole API is one long file. Your job is to **clean it up, ship it to production, fix it and add the hard
-parts**
-
-## Quick start
-
-You need **Node.js 22.12 or newer** (`node -v`) and Git.
-
-```bash
-git clone <your-fork-url>
-cd campus-events
-npm install        # installs api + web in one go
-npm run dev        # starts both
+```sh
+npm ci
+npm run dev
 ```
 
-Open **http://localhost:5173**. The API runs on http://localhost:3000/api.
-The first start fills the database with demo events. `npm run seed` resets it.
+Open http://localhost:5173. Vite proxies `/api` to Express on port 3000. The first server start seeds demo events if there are no events. `npm run seed` resets the database and pending mail jobs; use only with disposable demo data.
 
-Later parts need a few services. You never need them to run the tests.
+## Production preview
 
-| Service | Local | Setting in `api/.env` |
-|---|---|---|
-| RabbitMQ | `docker compose up -d rabbitmq` | `AMQP_URL` |
-| Redis | `docker compose up -d redis` | `REDIS_URL` |
-| Identity provider | a free Auth0 tenant | `AUTH_ISSUER`, `AUTH_AUDIENCE`, `AUTH_CLIENT_ID` |
+In PowerShell:
 
-## Scripts (run from the root folder)
-
-| Script | What it does |
-|---|---|
-| `npm run dev` | API + frontend with auto-reload |
-| `npm test` | All tests: API (node:test + supertest) and frontend (Vitest) |
-| `npm run lint` | ESLint for the whole project |
-| `npm run check` | Lint + tests. **The pipeline runs exactly this. It must be green before you hand in.** |
-| `npm run seed` | Reset the database to the demo data |
-| `npm run build` | Production build of the frontend |
-
-## How it fits together
-
-```
-browser ──► web (Vite, :5173) ──/api/*──► api (Express, :3000) ──► SQLite (api/data/events.sqlite)
+```powershell
+npm run build
+$env:NODE_ENV = 'production'
+npm start
 ```
 
-In development Vite forwards every `/api/...` request to the API (see `web/vite.config.js`),
-so the browser only talks to one address and you don't need CORS.
+Open http://localhost:3000. Express serves the Vue production bundle and API together. For live frontend edits use `npm run dev`.
 
-### api/
+## Configuration
 
-**Today** the whole API lives in one file:
+Copy `api/.env.example` to `api/.env` for local overrides. Never commit credentials or `.env`.
 
+| Variable | Purpose |
+| --- | --- |
+| `PORT` | HTTP port, default 3000 |
+| `NODE_ENV` | `production` serves `web/dist`; `test` disables local env loading and logging |
+| `DB_STORAGE` | SQLite file, defaults to `api/data/events.sqlite` |
+| `LOG_LEVEL` | Winston log level, default `info` |
+| `SMTP_URL` | Provider connection, e.g. `smtps://user:password@smtp.example.com:465` |
+| `MAIL_FROM` | Your verified sender address |
+
+Without SMTP credentials, registration succeeds and confirmation jobs remain queued. Real delivery requires valid provider settings. Automated tests need no external mail provider, Redis or RabbitMQ.
+
+## Implementation
+
+- `routes/` wires URLs and validation; `controllers/` handles HTTP; `services/` holds business rules; `repositories/` handles Sequelize operations. `db/` defines models and seed data; `config/` holds settings and logging. Services import neither Express nor Sequelize. Only `config/env.mjs` reads application environment variables.
+- Registration and its mail job commit in one SQLite transaction. A Nodemailer worker retries delivery failures with exponential backoff capped at one hour and resumes after restart. Registration never waits for SMTP.
+- Lists, details, registrations and statistics snapshots use a bounded 30-second server cache. Successful writes clear it after commit. A generation guard prevents stale in-flight reads from repopulating it. Statistics recalculate time-based status per request. Health always queries the database.
+- The corrected capacity check, transactions, serialized database work and unique `(eventId, email)` index protect concurrent subscriptions.
+- Production static serving, SPA deep links, graceful shutdown, a root start command, Render Blueprint and CI build check prepare the app for hosting.
+
+## API
+
+| Method | URL |
+| --- | --- |
+| GET | `/api/health` |
+| GET / POST | `/api/events` |
+| GET / PATCH / DELETE | `/api/events/:id` |
+| GET / POST | `/api/events/:id/registrations` |
+| GET | `/api/stats` |
+
+Registration takes `{ name, email }`. Errors preserve `{ error: { code, message, details? } }`. API responses use `Cache-Control: no-store` to prevent independent browser/intermediary caching; internal server caching remains enabled.
+
+## Verification
+
+```sh
+npm run check
+npm run build
 ```
-api/src/app.mjs      settings, database + models, validation, routes, business rules, error handling
-api/src/server.mjs   starts the app (and adds demo data to an empty database)
-api/src/seed.mjs     npm run seed: reset the database
-```
 
-Prefered:
+The original 20 API integration tests remain unchanged. Additional tests cover cache consistency, races, expiry, mail failure/recovery, transaction rollback, concurrent registration, SMTP transport, process restart durability and time-dependent statistics. The existing 10 frontend tests also pass. CI runs lint, tests and build.
 
-```
-routes/        URL + validation → controller        (no logic)
-controllers/   HTTP in/out, picks the status code    (thin)
-services/      business rules, throws AppErrors      (no Express, no SQL)
-repositories/  data access via Sequelize             (no rules)
-models/ db/    tables, connection, demo data
-config/        the only place that reads process.env
-```
+## Deployment and submission
 
-The integration tests in `api/tests/integration` only talk HTTP. They pass before your refactoring,
-and they must still pass after it, without changing them.
+This project is local and **not yet publicly deployed**. GitHub Pages alone cannot run the API, database or worker. `render.yaml` prepares a single paid Render service with a persistent SQLite disk. No hosting has been purchased or deployed.
 
-| Method | URL | |
-|---|---|---|
-| GET | `/api/health` | Health check |
-| GET / POST | `/api/events` | List / create |
-| GET / PATCH / DELETE | `/api/events/:id` | One event (incl. `registered`, `spotsLeft`) |
-| GET / POST | `/api/events/:id/registrations` | List / register `{ name, email }` |
-| GET | `/api/stats` | Occupancy per event |
+- [Publishing steps](docs/DEPLOYMENT.md)
+- [Presentation guide and references](docs/EXPLAINING-THE-SOLUTION.md)
+- [Submission checklist and Stack Overflow sources](SUBMISSION.md)
 
-Errors always have this shape: `{ "error": { "code", "message", "details?" } }`.
-
-### web/
-
-```
-api/          client.js (fetch + ApiError) and events.js (one function per endpoint)
-views/        one component per page, registered in router.js
-components/   reusable pieces: EventCard, SeatMeter, RegistrationForm, ErrorMessage
-styles.css    design tokens at the top, change those first
-```
+The implementation assumes one Node process and one SQLite database. Email delivery is at least once: a crash after SMTP acceptance but before outbox deletion may cause a duplicate. See the presentation guide for tradeoffs and scaling changes.

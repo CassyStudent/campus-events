@@ -1,14 +1,19 @@
-import { app, Event, seedDemoData, sequelize } from './app.mjs';
-
+import { app, sequelize, seedDemoData } from './app.mjs';
+import { repository } from './repositories/events.mjs';
+import { env } from './config/env.mjs';
+import { logger } from './config/logger.mjs';
+import { createSender } from './mail/sender.mjs';
+import { createMailWorker } from './services/mailWorker.mjs';
 await sequelize.sync();
-
-// First start on a fresh clone: fill the empty database so the UI has something to show.
-if ((await Event.count()) === 0) {
-  await seedDemoData();
-  console.log('Empty database – demo data added');
+if ((await repository.read((repo) => repo.list())).length === 0) await seedDemoData();
+const worker = createMailWorker({ send: createSender() });
+const server = app.listen(env.port, '0.0.0.0', () => logger.info('Campus Events running', { port: env.port }));
+worker.start();
+async function shutdown() {
+  server.close(async () => {
+    await worker.stop();
+    await sequelize.close();
+  });
 }
-
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Campus Events API running on http://localhost:${port}/api`);
-});
+process.once('SIGTERM', shutdown);
+process.once('SIGINT', shutdown);
