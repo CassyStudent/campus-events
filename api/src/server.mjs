@@ -7,7 +7,7 @@ import { createMailWorker } from './services/mailWorker.mjs';
 await sequelize.sync();
 if ((await repository.read((repo) => repo.list())).length === 0) await seedDemoData();
 const worker = createMailWorker({ send: createSender() });
-const server = app.listen(env.port, '0.0.0.0', () => logger.info('Campus Events running', { port: env.port }));
+const server = app.listen(env.port, env.host, () => logger.info('Campus Events running', { port: env.port }));
 worker.start();
 async function shutdown() {
   server.close(async () => {

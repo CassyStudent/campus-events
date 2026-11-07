@@ -1,37 +1,66 @@
-# Publishing when ready
+# Free deployment with alwaysdata
 
-The project is uploaded to https://github.com/CassyStudent/campus-events as a private repository. A public application deployment has not been created.
+The source is in https://github.com/CassyStudent/campus-events (private). The application is not online yet: an alwaysdata account and live verification are still required. The previous paid Render configuration has been removed.
 
-## GitHub
+## Selected plan
 
-The local `origin` points to your repository. The starter remains an `upstream` fetch source with its push URL disabled. To publish future changes from this project's directory:
+Alwaysdata's **Free** plan is listed at EUR 0/month for personal, non-commercial projects, with 1 GB of disk space, 256 MB RAM and a quarter CPU. Its free site address is under `alwaysdata.net`. This is separate from the introductory free month on its paid Plus plans. Choose Free, not Plus.
+
+- [Official offers](https://www.alwaysdata.com/en/offers/)
+- [Free plan limits](https://help.alwaysdata.com/en/admin-billing/billing/public-cloud-prices/)
+- [Node.js configuration](https://help.alwaysdata.com/en/docs/web-hosting/languages/nodejs/configuration/)
+- [Restrictions on unverified accounts](https://help.alwaysdata.com/en/docs/admin-billing/profile/restricted-mode/)
+
+Unverified accounts can have stricter HTTP filtering and outbound mail restrictions. Do not add payment details or upgrade to lift restrictions without the owner's explicit decision. Real SMTP delivery must be verified rather than assumed. Free resources may be sufficient for this small assignment, but deployment and resource use still need testing.
+
+## Account step
+
+The owner must create their own account using the [Free signup](https://www.alwaysdata.com/en/register/?p=2012), choose a password, complete email verification and accept the hosting terms themselves. Do not send passwords in chat or commit them to GitHub.
+
+## Deployment settings
+
+Replace `ACCOUNT` with the actual hosting account name:
+
+| Setting | Value |
+| --- | --- |
+| Site type | Node.js |
+| Address | `ACCOUNT.alwaysdata.net` |
+| Node.js version | Latest available Node 22 LTS, at least 22.22.2 |
+| Working directory | `/home/ACCOUNT/www/campus-events` |
+| Command | `node api/src/server.mjs` |
+| `NODE_ENV` | `production` |
+| `NODEJS_VERSION` | `22` |
+| `DB_STORAGE` | `/home/ACCOUNT/data/campus-events/events.sqlite` |
+| `IP` / `HOST`, `PORT` | Keep the platform-provided values |
+| `SMTP_URL` | Your provider's SMTP URL, entered privately in hosting settings |
+| `MAIL_FROM` | A sender authorized by that provider |
+
+In Web > Sites, create or edit the site. The app must bind to the IP and port shown by alwaysdata; its configuration now supports those variables. Use one web process: the mail polling worker runs within it, so a separate paid background service is unnecessary.
+
+Deploy the source from your own private GitHub repository through an authorized connection, or upload a release archive containing the source and built frontend. Keep secrets out of the archive. Linux dependencies must be installed on the Linux host; do not upload Windows `node_modules`.
+
+For a source build, run `npm ci` and `npm run build` before starting the site. If the 256 MB limit prevents building Vite remotely, build the frontend locally or in GitHub Actions and upload `web/dist` with the source, then install only runtime dependencies on the host with `npm ci --omit=dev`. Keep the SQLite directory outside code releases, and never run the destructive seed command against live data.
+
+## Verify before submission
+
+1. Open the HTTPS site address and `/api/health`.
+2. Create an event and register using a test email address you control.
+3. Confirm the participant and remaining seats update, including previously cached responses.
+4. Refresh a frontend deep link and check that unknown `/api` routes return JSON 404s.
+5. Restart the site and verify the event and registration persist.
+6. Verify real confirmation delivery using authorized SMTP settings. A missing or broken mail provider must leave the registration and pending job stored; restoring delivery must allow retry.
+7. Record the verified public URL in `SUBMISSION.md`, and give the teacher access to the private repository.
+
+## GitHub updates
+
+`origin` points to your own repository. The starter is retained as an `upstream` fetch source with its push URL disabled.
 
 ```sh
 git add .
-git commit -m "Refactor API, add durable mail delivery and consistent GET caching"
-git push -u origin main
+git commit -m "Describe the change"
+git push origin main
 ```
 
-The cloned starter history is retained. Give your teacher repository access for submission and check GitHub Actions is green. Never commit `.env`, SMTP credentials, SQLite files or `node_modules`.
+## Application limits
 
-## Render
-
-The included `render.yaml` defines a **paid** Starter Node web service with a 1 GB persistent disk. Check the current hosting cost in Render before creating it. A free service's temporary filesystem is not appropriate for durable SQLite registrations. Hosting has not been purchased or deployed.
-
-1. Connect your new repository to Render and create a Blueprint using `render.yaml`.
-2. Set `SMTP_URL` to your provider's SMTP connection URL and `MAIL_FROM` to a verified sender. Enter credentials in Render's environment settings, not source code. URL-encode special characters in the SMTP username/password. Check that the provider and selected hosting plan permit outbound SMTP.
-3. The definition uses `npm ci && npm run build`, then `npm start`.
-4. It sets `NODE_ENV=production`, Node 22.22.2 and `DB_STORAGE=/var/data/events.sqlite`, with the disk mounted at `/var/data`. Render supplies `PORT`.
-5. Keep one instance. The internal cache, database work queue and outbox worker assume one Node process.
-6. Wait for a successful deploy and `/api/health` to return `{ "status": "ok" }`.
-7. Open the public URL, create an event, register with your own real email address and verify both the registration and received confirmation. Warm event/detail/stats responses before changing data, then verify refreshed values.
-8. Restart the service and verify the event and registration remain. Temporarily configure an invalid SMTP credential, register for another event and confirm registration still succeeds; restore the credential and verify eventual delivery after backoff. Do not delete the persistent disk.
-9. Put the repository and public application URLs in `SUBMISSION.md`.
-
-The app serves both the Vue frontend and `/api` at one origin; a separate static host is unnecessary. Refreshing a Vue route returns the SPA, while `/api/unknown` returns a JSON 404.
-
-## Limits inherited from the starter
-
-The assignment starter exposes event management and registration listing without authentication. This implementation preserves that contract. Use fictional demo data for public presentation. Authentication/authorization would be a separate feature before using it with real campus data.
-
-`sequelize.sync()` adds the outbox table and missing indexes. Existing duplicate `(eventId, email)` rows must be resolved before adding the unique index to a previously modified database. Back up an existing database before deploying; use migrations for future schema changes rather than destructive sync options.
+The original API exposes event management and registration listings without authentication. Use fictional data for public demonstrations. Keep one process, retain database backups, and check disk usage against the free quota. Future schema changes should use migrations; back up an existing database before adding constraints.

@@ -16,6 +16,6 @@ The implementation is tested and uploaded to the repository below. The applicati
 - SMTP confirmation sender and transactional database outbox; failed mail never removes a committed registration.
 - Bounded GET data caching, post-commit invalidation and stale in-flight load protection.
 - Correct last-seat capacity check, transactional concurrent registration handling and duplicate registration constraint.
-- Production frontend serving, start script, Render deployment definition, and GitHub CI build check.
+- Production frontend serving, start script, free-host deployment instructions, and GitHub CI build check.
 
 See `docs/EXPLAINING-THE-SOLUTION.md` for the presentation walkthrough and `docs/DEPLOYMENT.md` for publishing steps. Do not claim the site is online until its public URL and real registration flow have been checked.

@@ -53,7 +53,7 @@ The frontend uses the supplied pastel reference: lavender/peach background gradi
 
 ## Deployment
 
-`npm run build` creates the Vue production bundle. With `NODE_ENV=production`, Express serves that bundle and the API from one origin, including Vue Router fallback on deep links. API 404s remain JSON. `PORT` is supplied by the host. `DB_STORAGE` points to a persistent disk. `render.yaml` prepares a single paid Render web service with that disk; creating it incurs hosting charges and has not been performed here.
+`npm run build` creates the Vue production bundle. With `NODE_ENV=production`, Express serves that bundle and the API from one origin, including Vue Router fallback on deep links. API 404s remain JSON. The selected free host is alwaysdata. It supplies `IP` (or `HOST`) and `PORT`; `config/env.mjs` reads these so Express binds to the required address, including IPv6. `DB_STORAGE` points to a persistent account directory outside the release files. Hosting still requires an account and live verification; it has not been deployed yet. The earlier paid Render configuration was removed after the user requested free hosting.
 
 GitHub Pages can serve the portfolio's static files, but cannot run this Node API, SQLite database or mail worker. The local preview is not a public deployment and is not the working online URL required for submission.
 

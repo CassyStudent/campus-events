@@ -46,7 +46,7 @@ Without SMTP credentials, registration succeeds and confirmation jobs remain que
 - Registration and its mail job commit in one SQLite transaction. A Nodemailer worker retries delivery failures with exponential backoff capped at one hour and resumes after restart. Registration never waits for SMTP.
 - Lists, details, registrations and statistics snapshots use a bounded 30-second server cache. Successful writes clear it after commit. A generation guard prevents stale in-flight reads from repopulating it. Statistics recalculate time-based status per request. Health always queries the database.
 - The corrected capacity check, transactions, serialized database work and unique `(eventId, email)` index protect concurrent subscriptions.
-- Production static serving, SPA deep links, graceful shutdown, a root start command, Render Blueprint and CI build check prepare the app for hosting.
+- Production static serving, SPA deep links, graceful shutdown, a root start command, configurable listening address and CI build check prepare the app for hosting.
 
 ## API
 
@@ -71,7 +71,7 @@ The original 20 API integration tests remain unchanged. Additional tests cover c
 
 ## Deployment and submission
 
-Source code is available in [CassyStudent/campus-events](https://github.com/CassyStudent/campus-events), a private repository. The application is **not yet publicly deployed**. GitHub Pages alone cannot run the API, database or worker. `render.yaml` prepares a single paid Render service with a persistent SQLite disk. No hosting has been purchased or deployed.
+Source code is available in [CassyStudent/campus-events](https://github.com/CassyStudent/campus-events), a private repository. The application is **not yet publicly deployed**. GitHub Pages alone cannot run the API, database or worker. The selected hosting option is alwaysdata's personal-use Free plan; see the publishing steps below. The server accepts the platform's `IP`/`HOST` and `PORT` settings. No paid hosting has been configured or purchased.
 
 - [Publishing steps](docs/DEPLOYMENT.md)
 - [Presentation guide and references](docs/EXPLAINING-THE-SOLUTION.md)
