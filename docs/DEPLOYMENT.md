@@ -1,6 +1,6 @@
 # Free deployment with alwaysdata
 
-The source is in https://github.com/CassyStudent/campus-events (private). The application is not online yet: an alwaysdata account and live verification are still required. The previous paid Render configuration has been removed.
+The source is in https://github.com/CassyStudent/campus-events (private). The application is live at **https://cassy-campus-events.alwaysdata.net/** on the Free plan. API health, registration, occupancy and persistence after a server restart were verified. SMTP credentials remain unconfigured; registrations are stored and confirmation jobs stay queued. The previous paid Render configuration has been removed.
 
 ## Selected plan
 
@@ -15,7 +15,7 @@ Unverified accounts can have stricter HTTP filtering and outbound mail restricti
 
 ## Account step
 
-The owner must create their own account using the [Free signup](https://www.alwaysdata.com/en/register/?p=2012), choose a password, complete email verification and accept the hosting terms themselves. Do not send passwords in chat or commit them to GitHub.
+The owner created the Free account `cassy-campus-events`. Do not send passwords in chat or commit them to GitHub.
 
 ## Deployment settings
 
@@ -64,3 +64,8 @@ git push origin main
 ## Application limits
 
 The original API exposes event management and registration listings without authentication. Use fictional data for public demonstrations. Keep one process, retain database backups, and check disk usage against the free quota. Future schema changes should use migrations; back up an existing database before adding constraints.
+
+
+## Verified deployment
+
+The site uses Node 22, the command `node /home/cassy-campus-events/www/campus-events/api/src/server.mjs`, working directory `www/campus-events`, and `DB_STORAGE=/home/cassy-campus-events/data/campus-events/events.sqlite`. Source and prebuilt frontend archives were uploaded; production dependencies were installed on Linux. The temporary uploader and SSH key were removed. The test registration is fictional (`Demo Student`, `demo@example.com`). SMTP credentials are still required for real email delivery.

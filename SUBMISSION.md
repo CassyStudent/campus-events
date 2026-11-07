@@ -1,9 +1,9 @@
 # Submission checklist
 
-The implementation is tested and uploaded to the repository below. The application still needs a working public deployment before this is a completed submission.
+The application is deployed on alwaysdata Free. Public browsing, registration, API health, occupancy and registration persistence after a restart were checked on 7 November 2026. Real email delivery still requires valid SMTP credentials.
 
 - **Your GitHub repository:** https://github.com/CassyStudent/campus-events (private; your teacher will need access).
-- **Working public application:** pending backend deployment. The localhost preview is only available on this computer and is not the submission URL.
+- **Working public application:** https://cassy-campus-events.alwaysdata.net/
 
 ## Stack Overflow sources used and why
 

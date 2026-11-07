@@ -53,7 +53,7 @@ The frontend uses the supplied pastel reference: lavender/peach background gradi
 
 ## Deployment
 
-`npm run build` creates the Vue production bundle. With `NODE_ENV=production`, Express serves that bundle and the API from one origin, including Vue Router fallback on deep links. API 404s remain JSON. The selected free host is alwaysdata. It supplies `IP` (or `HOST`) and `PORT`; `config/env.mjs` reads these so Express binds to the required address, including IPv6. `DB_STORAGE` points to a persistent account directory outside the release files. Hosting still requires an account and live verification; it has not been deployed yet. The earlier paid Render configuration was removed after the user requested free hosting.
+`npm run build` creates the Vue production bundle. With `NODE_ENV=production`, Express serves that bundle and the API from one origin, including Vue Router fallback on deep links. API 404s remain JSON. The selected free host is alwaysdata. It supplies `IP` (or `HOST`) and `PORT`; `config/env.mjs` reads these so Express binds to the required address, including IPv6. `DB_STORAGE` points to a persistent account directory outside the release files. The application is deployed at https://cassy-campus-events.alwaysdata.net/; registration, health and persistence after restart were verified. Real mail delivery still needs SMTP credentials. The earlier paid Render configuration was removed after the user requested free hosting.
 
 GitHub Pages can serve the portfolio's static files, but cannot run this Node API, SQLite database or mail worker. The local preview is not a public deployment and is not the working online URL required for submission.
 

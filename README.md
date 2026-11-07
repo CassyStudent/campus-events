@@ -71,7 +71,7 @@ The original 20 API integration tests remain unchanged. Additional tests cover c
 
 ## Deployment and submission
 
-Source code is available in [CassyStudent/campus-events](https://github.com/CassyStudent/campus-events), a private repository. The application is **not yet publicly deployed**. GitHub Pages alone cannot run the API, database or worker. The selected hosting option is alwaysdata's personal-use Free plan; see the publishing steps below. The server accepts the platform's `IP`/`HOST` and `PORT` settings. No paid hosting has been configured or purchased.
+Source code is available in [CassyStudent/campus-events](https://github.com/CassyStudent/campus-events), a private repository. The application is online at **https://cassy-campus-events.alwaysdata.net/**. GitHub Pages alone cannot run the API, database or worker. The selected hosting option is alwaysdata's personal-use Free plan; see the publishing steps below. The server accepts the platform's `IP`/`HOST` and `PORT` settings. No paid hosting has been configured or purchased.
 
 - [Publishing steps](docs/DEPLOYMENT.md)
 - [Presentation guide and references](docs/EXPLAINING-THE-SOLUTION.md)
