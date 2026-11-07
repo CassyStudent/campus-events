@@ -71,7 +71,7 @@ The original 20 API integration tests remain unchanged. Additional tests cover c
 
 ## Deployment and submission
 
-This project is local and **not yet publicly deployed**. GitHub Pages alone cannot run the API, database or worker. `render.yaml` prepares a single paid Render service with a persistent SQLite disk. No hosting has been purchased or deployed.
+Source code is available in [CassyStudent/campus-events](https://github.com/CassyStudent/campus-events), a private repository. The application is **not yet publicly deployed**. GitHub Pages alone cannot run the API, database or worker. `render.yaml` prepares a single paid Render service with a persistent SQLite disk. No hosting has been purchased or deployed.
 
 - [Publishing steps](docs/DEPLOYMENT.md)
 - [Presentation guide and references](docs/EXPLAINING-THE-SOLUTION.md)

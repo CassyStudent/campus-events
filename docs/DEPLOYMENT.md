@@ -1,20 +1,18 @@
 # Publishing when ready
 
-The project is currently prepared locally, following the portfolio workflow. No GitHub repository or public deployment has been created by this work.
+The project is uploaded to https://github.com/CassyStudent/campus-events as a private repository. A public application deployment has not been created.
 
 ## GitHub
 
-Create a new empty repository named `campus-events` under your own GitHub account. Do not initialize it with another README. From this project's directory:
+The local `origin` points to your repository. The starter remains an `upstream` fetch source with its push URL disabled. To publish future changes from this project's directory:
 
 ```sh
 git add .
 git commit -m "Refactor API, add durable mail delivery and consistent GET caching"
-git remote rename origin upstream
-git remote add origin https://github.com/YOUR-USERNAME/campus-events.git
 git push -u origin main
 ```
 
-The cloned starter history is retained. Replace `YOUR-USERNAME`. Check GitHub Actions is green. Never commit `.env`, SMTP credentials, SQLite files or `node_modules`.
+The cloned starter history is retained. Give your teacher repository access for submission and check GitHub Actions is green. Never commit `.env`, SMTP credentials, SQLite files or `node_modules`.
 
 ## Render
 

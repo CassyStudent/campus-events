@@ -1,8 +1,8 @@
 # Submission checklist
 
-The implementation is local and tested. This file is not yet a completed submission: the two public URLs must be filled in after publishing and verifying the live app.
+The implementation is tested and uploaded to the repository below. The application still needs a working public deployment before this is a completed submission.
 
-- **Your GitHub repository:** pending creation/push under your account.
+- **Your GitHub repository:** https://github.com/CassyStudent/campus-events (private; your teacher will need access).
 - **Working public application:** pending backend deployment. The localhost preview is only available on this computer and is not the submission URL.
 
 ## Stack Overflow sources used and why
