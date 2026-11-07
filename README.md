@@ -1,6 +1,26 @@
 # Campus Events
 
-Students browse campus events, register, and receive confirmation emails. Based on the [Thomas More starter](https://github.com/JelleOosterboschThomasMore/campus-events).
+Students browse campus events, register, and queue confirmation emails. Based on the [Thomas More starter](https://github.com/JelleOosterboschThomasMore/campus-events).
+
+## Assignment submission
+
+- **GitHub project:** [CassyStudent/campus-events](https://github.com/CassyStudent/campus-events)
+- **Working online application:** [Open Campus Events](https://cassy-campus-events.alwaysdata.net/)
+
+The backend has been split into routes, controllers, services and repositories. Registration and its confirmation job are saved in a single database transaction, so mail-provider failures do not lose a successful registration. A background worker retries failed emails. GET data is cached, with invalidation after successful changes and protection against stale in-flight requests refilling the cache.
+
+The application runs on alwaysdata's Free plan. Browsing, registration, occupancy, API health and registration persistence after a server restart have been checked. All 46 automated tests and the production build pass.
+
+**Email delivery status:** the SMTP sender and retry mechanism are implemented and tested, but the live deployment still needs valid SMTP credentials to send real confirmation emails. Registrations are saved and their email jobs remain queued in the meantime.
+
+### Stack Overflow sources used and why
+
+| Source | How it was used |
+| --- | --- |
+| [Cache invalidation algorithm](https://stackoverflow.com/questions/45118929/cache-invalidation-algorithm) | Used to understand how an older request can finish after invalidation and refill the cache with stale data. This informed the generation counter and its regression test. |
+| [Managing a transactional outbox](https://stackoverflow.com/questions/76308901/managing-rapidly-growing-outbox-table-when-implementing-transactional-outbox) | Used to consider the outbox lifecycle and cleanup: successful email jobs are removed, while failed jobs remain stored for retry. This project uses SQLite and SMTP rather than the question's Postgres/Kafka stack. |
+
+The repository is private; the teacher needs repository access to review this submission. The [presentation guide](docs/EXPLAINING-THE-SOLUTION.md) explains the architecture, important functions and design choices.
 
 ## Development
 
