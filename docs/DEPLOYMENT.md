@@ -1,6 +1,6 @@
 # Free deployment with alwaysdata
 
-The source is in https://github.com/CassyStudent/campus-events (private). The application is live at **https://cassy-campus-events.alwaysdata.net/** on the Free plan. API health, registration, occupancy and persistence after a server restart were verified. SMTP credentials remain unconfigured; registrations are stored and confirmation jobs stay queued. The previous paid Render configuration has been removed.
+The source is in https://github.com/CassyStudent/campus-events (public). The application is live at **https://cassy-campus-events.alwaysdata.net/** on the Free plan. API health, registration, occupancy and persistence after a server restart were verified. SMTP credentials remain unconfigured; registrations are stored and confirmation jobs stay queued. The previous paid Render configuration has been removed.
 
 ## Selected plan
 
@@ -49,7 +49,7 @@ For a source build, run `npm ci` and `npm run build` before starting the site. I
 4. Refresh a frontend deep link and check that unknown `/api` routes return JSON 404s.
 5. Restart the site and verify the event and registration persist.
 6. Verify real confirmation delivery using authorized SMTP settings. A missing or broken mail provider must leave the registration and pending job stored; restoring delivery must allow retry.
-7. Record the verified public URL in `SUBMISSION.md`, and give the teacher access to the private repository.
+7. Record the verified public URL in `SUBMISSION.md`, and give the teacher access to the repository.
 
 ## GitHub updates
 

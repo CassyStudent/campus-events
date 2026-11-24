@@ -14,6 +14,7 @@ async function shutdown() {
     await worker.stop();
     await sequelize.close();
   });
+  server.closeAllConnections();
 }
 process.once('SIGTERM', shutdown);
 process.once('SIGINT', shutdown);

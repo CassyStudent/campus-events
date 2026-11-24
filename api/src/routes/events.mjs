@@ -1,10 +1,12 @@
 import { Router } from 'express';
+import { streamNotifications } from '../controllers/notifications.mjs';
 import { controllers as c } from '../controllers/events.mjs';
 import { validate } from '../middleware/validate.mjs';
 import { idSchema, createEventSchema, updateEventSchema, registrationSchema } from '../validation/schemas.mjs';
 export const router = Router();
 const id = validate(idSchema, 'params');
 router.get('/health', c.health);
+router.get('/notifications', streamNotifications);
 router.get('/events', c.list);
 router.post('/events', validate(createEventSchema, 'body'), c.create);
 router.get('/events/:id', id, c.detail);

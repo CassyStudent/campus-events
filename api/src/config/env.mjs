@@ -9,6 +9,7 @@ if (process.env.NODE_ENV !== 'test') {
 export const env = {
   host: process.env.IP || process.env.HOST || '0.0.0.0',
   port: Number(process.env.PORT || 3000),
+  mcpOrigins: (process.env.MCP_ORIGINS || 'http://localhost:3000,http://localhost:5173,https://cassy-campus-events.alwaysdata.net').split(',').map((origin) => origin.trim()),
   test: process.env.NODE_ENV === 'test',
   production: process.env.NODE_ENV === 'production',
   logLevel: process.env.LOG_LEVEL || 'info',

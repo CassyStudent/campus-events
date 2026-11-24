@@ -2,8 +2,16 @@
 
 The application is deployed on alwaysdata Free. Public browsing, registration, API health, occupancy and registration persistence after a restart were checked on 7 November 2026. Real email delivery still requires valid SMTP credentials.
 
-- **Your GitHub repository:** https://github.com/CassyStudent/campus-events (private; your teacher will need access).
+- **Your GitHub repository:** https://github.com/CassyStudent/campus-events (public).
 - **Working public application:** https://cassy-campus-events.alwaysdata.net/
+- **MCP endpoint:** https://cassy-campus-events.alwaysdata.net/mcp
+
+## MCP and notifications assignment
+
+- MCP tools list upcoming/past/all events and register one person or a group through the shared registration service.
+- Event creation and each successful registration produce one anonymous toast in every connected browser/tab. Failed transactions and email retries produce none.
+- Notifications contain only a unique ID, notification type and event ID. The frontend suppresses replayed IDs.
+- Automated checks: lint, 56 tests and production build pass. See [setup and classroom demo](docs/MCP-AND-NOTIFICATIONS.md).
 
 ## Stack Overflow sources used and why
 

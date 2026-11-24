@@ -1,5 +1,6 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router';
+import LiveToasts from './components/LiveToasts.vue';
 </script>
 
 <template>
@@ -17,4 +18,5 @@ import { RouterLink, RouterView } from 'vue-router';
   <main class="page">
     <RouterView />
   </main>
+  <LiveToasts />
 </template>

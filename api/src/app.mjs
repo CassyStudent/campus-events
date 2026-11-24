@@ -3,11 +3,13 @@ import { fileURLToPath } from 'node:url';
 import { env } from './config/env.mjs';
 import { logger } from './config/logger.mjs';
 import { router } from './routes/events.mjs';
+import { mcpRouter } from './routes/mcp.mjs';
 import { errorHandler } from './middleware/errors.mjs';
 // Compatibility exports for the original test helper and seed command.
 export { sequelize, Event, Registration } from './db/models.mjs';
 export { seedDemoData } from './db/demo.mjs';
 export const app = express();
+app.use('/mcp', mcpRouter);
 app.use(express.json());
 app.use((req, res, next) => {
   const start = performance.now();

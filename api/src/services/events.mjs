@@ -1,6 +1,7 @@
 import { repository } from '../repositories/events.mjs';
 import { cache } from '../cache/cache.mjs';
 import { AppError } from '../errors/AppError.mjs';
+import { publishNotification } from './notifications.mjs';
 async function requireEvent(repo, id) {
   const event = await repo.find(id);
   if (!event) throw new AppError(404, 'NOT_FOUND', 'Event with id ' + id + ' not found');
@@ -19,25 +20,27 @@ export const events = {
     const registered = await repo.count(id);
     return { ...event, registered, spotsLeft: Math.max(event.capacity - registered, 0) };
   })),
-  create: (data) => change((repo) => repo.create(data)),
+  async create(data) {
+    const event = await change((repo) => repo.create(data));
+    publishNotification('event.created', event.id);
+    return event;
+  },
   update: (id, data) => change(async (repo) => { await requireEvent(repo, id); return repo.update(id, data); }),
   remove: (id) => change(async (repo) => { await requireEvent(repo, id); await repo.remove(id); }),
   registrations: (id) => cache.get('registrations:' + id, () => repository.read(async (repo) => {
     await requireEvent(repo, id);
     return repo.registrations(id);
   })),
-  register: (id, data) => change(async (repo) => {
-    const event = await requireEvent(repo, id);
-    if (await repo.existing(id, data.email)) throw new AppError(409, 'CONFLICT', data.email + ' is already registered for this event');
-    if (await repo.count(id) >= event.capacity) throw new AppError(409, 'CONFLICT', 'Event is full');
-    const registration = await repo.register({ ...data, eventId: id });
-    await repo.enqueue({
-      recipient: data.email,
-      subject: 'You are registered for ' + event.title,
-      text: 'Hello ' + data.name + ',\n\nYour registration for ' + event.title + ' is confirmed.\nLocation: ' + event.location + '\nStarts: ' + new Date(event.startsAt).toISOString()
+  register: async (id, data) => (await events.registerMany(id, [data]))[0],
+  async registerMany(id, people) {
+    const registrations = await change(async (repo) => {
+      const results = [];
+      for (const person of people) results.push(await registerPerson(repo, id, person));
+      return results;
     });
-    return registration;
-  }),
+    registrations.forEach(() => publishNotification('registration.created', id));
+    return registrations;
+  },
   async stats() {
     const rows = await cache.get('stats', () => repository.read(async (repo) => {
       const counts = new Map((await repo.counts()).map((row) => [row.eventId, Number(row.count)]));
@@ -50,4 +53,16 @@ export const events = {
     }));
   }
 };
+async function registerPerson(repo, id, data) {
+    const event = await requireEvent(repo, id);
+    if (await repo.existing(id, data.email)) throw new AppError(409, 'CONFLICT', data.email + ' is already registered for this event');
+    if (await repo.count(id) >= event.capacity) throw new AppError(409, 'CONFLICT', 'Event is full');
+    const registration = await repo.register({ ...data, eventId: id });
+    await repo.enqueue({
+      recipient: data.email,
+      subject: 'You are registered for ' + event.title,
+      text: 'Hello ' + data.name + ',\n\nYour registration for ' + event.title + ' is confirmed.\nLocation: ' + event.location + '\nStarts: ' + new Date(event.startsAt).toISOString()
+    });
+    return registration;
+}
 function pastStatus(startsAt) { return new Date(startsAt) < new Date() ? 'past' : 'open'; }
