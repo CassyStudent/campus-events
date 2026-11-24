@@ -12,6 +12,7 @@ The application is deployed on alwaysdata Free. Public browsing, registration, A
 - Event creation and each successful registration produce one anonymous toast in every connected browser/tab. Failed transactions and email retries produce none.
 - Notifications contain only a unique ID, notification type and event ID. The frontend suppresses replayed IDs.
 - Automated checks: lint, 56 tests and production build pass. See [setup and classroom demo](docs/MCP-AND-NOTIFICATIONS.md).
+- Live verification on **24 November 2026**: MCP initialization/discovery, upcoming/past events, group registration, duplicate/capacity rejection and two simultaneous browser pages passed. Each page showed one toast per committed registration, with no participant identity. All three demo registrations remained after restarting the host.
 
 ## Stack Overflow sources used and why
 

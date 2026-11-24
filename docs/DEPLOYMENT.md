@@ -69,3 +69,11 @@ The original API exposes event management and registration listings without auth
 ## Verified deployment
 
 The site uses Node 22, the command `node /home/cassy-campus-events/www/campus-events/api/src/server.mjs`, working directory `www/campus-events`, and `DB_STORAGE=/home/cassy-campus-events/data/campus-events/events.sqlite`. Source and prebuilt frontend archives were uploaded; production dependencies were installed on Linux. The temporary uploader and SSH key were removed. The test registration is fictional (`Demo Student`, `demo@example.com`). SMTP credentials are still required for real email delivery.
+
+### MCP and notifications update: 24 November 2026
+
+The updated source and frontend are deployed. MCP listing and group registration, two browser notification streams, duplicate/capacity rejection, API health and persistence after a restart were verified. The temporary release uploader was replaced by the permanent startup command above.
+
+The free host killed installation of the entire workspace. Its current runtime therefore installs only the API packages in `/home/cassy-campus-events/runtime-campus-events`; `www/campus-events/api/node_modules` links to that runtime's `node_modules`. The Vue bundle is built locally and uploaded, so the host needs no frontend build tools.
+
+To reproduce this installation, copy `api/package.json` into that separate runtime directory and run `npm install --omit=dev --ignore-scripts --workspaces=false --package-lock=false --no-audit --no-fund` there, with `NODE_OPTIONS=--max-old-space-size=64`, `UV_THREADPOOL_SIZE=1` and `npm_config_maxsockets=1`. Install the SQLite package's official prebuilt binding with `node ../prebuild-install/bin.js --runtime=napi --target=6` from the runtime's `node_modules/sqlite3` directory, then link its `node_modules` to the API directory. This avoids compiling SQLite on the small host. The runtime installation follows the API dependency ranges; the repository's normal `npm ci` remains the lockfile-based installation used for development and automated checks.

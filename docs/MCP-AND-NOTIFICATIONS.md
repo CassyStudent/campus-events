@@ -80,6 +80,8 @@ A registration tool call looks like this. It changes data, so use fictional demo
 
 ## Verification and limits
 
+The public deployment was verified on **24 November 2026**. MCP initialization and tool discovery worked, upcoming/past queries returned the correct events, and a group of two was saved. Two open pages each received one creation toast and one anonymous toast per registration. Duplicate and over-capacity groups were rejected; the failed group saved no partial registrations. Event 5, **Creative Campus Meetup**, retained its three fictional test participants and one remaining seat after a hosting restart. Health and MCP discovery also passed after restart.
+
 `npm run check` runs lint and all 56 tests. `npm run build` compiles production assets. New tests exercise MCP initialization/discovery/calls, current-time filtering, argument validation, origin/version rejection, group transactions, privacy, two real HTTP SSE connections, rollback without notifications, reconnect replay, duplicate suppression, toast dismissal/expiry and cleanup.
 
 This assignment uses one Node process. Notification history is memory-only and limited to 200 messages; offline browsers, long disconnections and restarts can miss messages. Deduplication is scoped to the current page session, so each open tab receives its own toast. For multiple server processes, use shared pub/sub and persistent event history. These notifications do not include participant identities; the original registration-list endpoint still exposes registrations, so use fictional data in this public demo. Production access control would need to protect REST and MCP together. Browser Origin validation is not authentication.

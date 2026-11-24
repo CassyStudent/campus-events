@@ -17,6 +17,8 @@ Students browse campus events, register, and queue confirmation emails. Based on
 
 See [MCP setup, example requests and classroom demo](docs/MCP-AND-NOTIFICATIONS.md) for connection instructions and an explanation of the code. This small implementation adds no dependencies and implements the MCP 2025-06-18 JSON-RPC lifecycle and tools over stateless Streamable HTTP.
 
+**Live verification — 24 November 2026:** deployed and tested at the website above. MCP initialization, tool discovery, upcoming/past filtering and two-person registration passed. Two open browser pages each received one creation toast and exactly two anonymous toasts for the two-person group. Duplicate and over-capacity requests were rejected without extra notifications or partial registrations. A server restart preserved all three test registrations and the MCP endpoint remained available. The demo event is **Creative Campus Meetup**; its participants use fictional names and `example.com` addresses.
+
 The backend has been split into routes, controllers, services and repositories. Registration and its confirmation job are saved in a single database transaction, so mail-provider failures do not lose a successful registration. A background worker retries failed emails. GET data is cached, with invalidation after successful changes and protection against stale in-flight requests refilling the cache.
 
 The application runs on alwaysdata's Free plan. Browsing, registration, occupancy, API health and registration persistence after a server restart have been checked. All 56 automated tests and the production build pass, including MCP calls, atomic group rollback, two simultaneous notification streams, anonymous messages and frontend replay deduplication.
